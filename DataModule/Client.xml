@@ -1,0 +1,1 @@
+<?xml version="1.0" standalone="yes"?>  <DATAPACKET Version="2.0"><METADATA><FIELDS><FIELD attrname="ID" fieldtype="i4"/><FIELD attrname="NOME" fieldtype="string" WIDTH="150"/><FIELD attrname="CIDADE" fieldtype="string" WIDTH="50"/><FIELD attrname="UF" fieldtype="string" WIDTH="2"/></FIELDS><PARAMS/></METADATA><ROWDATA></ROWDATA></DATAPACKET>
