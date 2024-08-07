@@ -14,6 +14,7 @@ object frmPDV: TfrmPDV
   WindowState = wsMaximized
   OnCreate = FormCreate
   OnShortCut = FormShortCut
+  OnShow = FormShow
   TextHeight = 15
   object CardPanel1: TCardPanel
     Left = 0
@@ -87,7 +88,7 @@ object frmPDV: TfrmPDV
           object Label2: TLabel
             AlignWithMargins = True
             Left = 3
-            Top = 153
+            Top = 133
             Width = 356
             Height = 37
             Cursor = crHandPoint
@@ -110,7 +111,7 @@ object frmPDV: TfrmPDV
           object Label6: TLabel
             AlignWithMargins = True
             Left = 3
-            Top = 286
+            Top = 246
             Width = 356
             Height = 37
             Cursor = crHandPoint
@@ -134,7 +135,7 @@ object frmPDV: TfrmPDV
           object Label7: TLabel
             AlignWithMargins = True
             Left = 3
-            Top = 419
+            Top = 359
             Width = 356
             Height = 37
             Cursor = crHandPoint
@@ -157,9 +158,9 @@ object frmPDV: TfrmPDV
           object pnl4vTotal: TPanel
             AlignWithMargins = True
             Left = 30
-            Top = 459
+            Top = 399
             Width = 339
-            Height = 90
+            Height = 70
             Margins.Left = 30
             Margins.Top = 0
             Margins.Right = 0
@@ -174,7 +175,7 @@ object frmPDV: TfrmPDV
               Left = 5
               Top = 5
               Width = 329
-              Height = 80
+              Height = 60
               Margins.Left = 5
               Margins.Top = 5
               Margins.Right = 5
@@ -183,7 +184,7 @@ object frmPDV: TfrmPDV
               Alignment = taRightJustify
               Font.Charset = DEFAULT_CHARSET
               Font.Color = 2368548
-              Font.Height = -53
+              Font.Height = -47
               Font.Name = 'Segoe UI'
               Font.Style = []
               ParentFont = False
@@ -192,15 +193,15 @@ object frmPDV: TfrmPDV
               Text = 'R$ 0,00'
               TextHint = 'R$ 0,00'
               OnKeyDown = edSUB_TOTALKeyDown
-              ExplicitHeight = 79
+              ExplicitHeight = 70
             end
           end
           object pnl3Preco: TPanel
             AlignWithMargins = True
             Left = 30
-            Top = 326
+            Top = 286
             Width = 339
-            Height = 90
+            Height = 70
             Margins.Left = 30
             Margins.Top = 0
             Margins.Right = 0
@@ -215,7 +216,7 @@ object frmPDV: TfrmPDV
               Left = 5
               Top = 5
               Width = 329
-              Height = 80
+              Height = 60
               Margins.Left = 5
               Margins.Top = 5
               Margins.Right = 5
@@ -224,7 +225,7 @@ object frmPDV: TfrmPDV
               Alignment = taRightJustify
               Font.Charset = DEFAULT_CHARSET
               Font.Color = 2368548
-              Font.Height = -53
+              Font.Height = -47
               Font.Name = 'Segoe UI'
               Font.Style = []
               ParentFont = False
@@ -232,15 +233,15 @@ object frmPDV: TfrmPDV
               TextHint = 'R$ 0,00'
               OnExit = CalcSubTotal
               OnKeyDown = edVL_UNKeyDown
-              ExplicitHeight = 79
+              ExplicitHeight = 70
             end
           end
           object pnl2QTD: TPanel
             AlignWithMargins = True
             Left = 30
-            Top = 193
+            Top = 173
             Width = 339
-            Height = 90
+            Height = 70
             Margins.Left = 30
             Margins.Top = 0
             Margins.Right = 0
@@ -255,7 +256,7 @@ object frmPDV: TfrmPDV
               Left = 5
               Top = 5
               Width = 329
-              Height = 80
+              Height = 60
               Margins.Left = 5
               Margins.Top = 5
               Margins.Right = 5
@@ -264,7 +265,7 @@ object frmPDV: TfrmPDV
               Alignment = taRightJustify
               Font.Charset = DEFAULT_CHARSET
               Font.Color = 2368548
-              Font.Height = -53
+              Font.Height = -47
               Font.Name = 'Segoe UI'
               Font.Style = []
               ParentFont = False
@@ -273,7 +274,7 @@ object frmPDV: TfrmPDV
               TextHint = '0'
               OnExit = CalcSubTotal
               OnKeyDown = edQTDKeyDown
-              ExplicitHeight = 79
+              ExplicitHeight = 70
             end
           end
           object pnl1IDProduto: TPanel
@@ -281,7 +282,7 @@ object frmPDV: TfrmPDV
             Left = 30
             Top = 60
             Width = 339
-            Height = 90
+            Height = 70
             Margins.Left = 30
             Margins.Top = 0
             Margins.Right = 0
@@ -296,7 +297,7 @@ object frmPDV: TfrmPDV
               Left = 5
               Top = 5
               Width = 329
-              Height = 80
+              Height = 60
               Margins.Left = 5
               Margins.Top = 5
               Margins.Right = 5
@@ -305,12 +306,13 @@ object frmPDV: TfrmPDV
               Alignment = taRightJustify
               BevelInner = bvNone
               BevelOuter = bvNone
-              BevelWidth = 10
+              Ctl3D = True
               Font.Charset = DEFAULT_CHARSET
               Font.Color = 2368548
-              Font.Height = -53
+              Font.Height = -47
               Font.Name = 'Segoe UI'
               Font.Style = []
+              ParentCtl3D = False
               ParentFont = False
               TabOrder = 0
               TextHint = '0'
@@ -318,7 +320,7 @@ object frmPDV: TfrmPDV
               OnClick = edIDClick
               OnExit = edIDExit
               OnKeyDown = edIDKeyDown
-              ExplicitHeight = 79
+              ExplicitHeight = 70
             end
           end
           object pnlBtns: TPanel
@@ -436,6 +438,140 @@ object frmPDV: TfrmPDV
               end
             end
           end
+          object pnlAcao: TPanel
+            Left = 32
+            Top = 488
+            Width = 337
+            Height = 62
+            TabOrder = 5
+            object SpeedButton1: TSpeedButton
+              Left = 0
+              Top = 0
+              Width = 73
+              Height = 57
+              Caption = 'X'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = 'Segoe UI'
+              Font.Style = []
+              ParentFont = False
+            end
+            object Panel2: TPanel
+              Tag = 4
+              Left = 1
+              Top = 1
+              Width = 160
+              Height = 60
+              Margins.Left = 5
+              Margins.Top = 5
+              Margins.Right = 5
+              Margins.Bottom = 5
+              Align = alLeft
+              BevelOuter = bvNone
+              Color = 9858305
+              ParentBackground = False
+              TabOrder = 0
+              object Label9: TLabel
+                Left = 4
+                Top = 5
+                Width = 49
+                Height = 49
+                Alignment = taCenter
+                AutoSize = False
+                Caption = #55357#56589
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWhite
+                Font.Height = -40
+                Font.Name = 'Arial'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object lblPedido: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 3
+                Width = 154
+                Height = 54
+                Cursor = crHandPoint
+                Align = alClient
+                Alignment = taCenter
+                AutoSize = False
+                Caption = '      PEDIDO'
+                Color = 4953856
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -27
+                Font.Name = 'Segoe UI'
+                Font.Style = []
+                ParentColor = False
+                ParentFont = False
+                Layout = tlCenter
+                OnClick = lblPedidoClick
+                ExplicitLeft = 45
+                ExplicitTop = 8
+                ExplicitWidth = 109
+                ExplicitHeight = 41
+              end
+            end
+            object Panel3: TPanel
+              Tag = 4
+              Left = 176
+              Top = 1
+              Width = 160
+              Height = 60
+              Margins.Left = 5
+              Margins.Top = 5
+              Margins.Right = 5
+              Margins.Bottom = 5
+              Align = alRight
+              BevelOuter = bvNone
+              Color = 197547
+              ParentBackground = False
+              TabOrder = 1
+              object Label11: TLabel
+                Left = 4
+                Top = 5
+                Width = 49
+                Height = 49
+                Alignment = taCenter
+                AutoSize = False
+                Caption = #55357#56785
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWhite
+                Font.Height = -40
+                Font.Name = 'Arial'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object lblDelete: TLabel
+                AlignWithMargins = True
+                Left = 3
+                Top = 3
+                Width = 154
+                Height = 54
+                Cursor = crHandPoint
+                Align = alClient
+                Alignment = taCenter
+                AutoSize = False
+                Caption = '      DELETAR'
+                Color = 4953856
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -27
+                Font.Name = 'Segoe UI'
+                Font.Style = []
+                ParentColor = False
+                ParentFont = False
+                Layout = tlCenter
+                OnClick = lblDeleteClick
+                ExplicitLeft = 45
+                ExplicitTop = 8
+                ExplicitWidth = 109
+                ExplicitHeight = 41
+              end
+            end
+          end
         end
         object pnlLeft: TPanel
           Left = 0
@@ -519,7 +655,7 @@ object frmPDV: TfrmPDV
               Align = alClient
               Alignment = taCenter
               AutoSize = False
-              Caption = 'R$ 61.985,04'
+              Caption = 'R$ 0,00'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWhite
               Font.Height = -67
@@ -548,18 +684,39 @@ object frmPDV: TfrmPDV
         Color = 8074511
         ParentBackground = False
         TabOrder = 1
-        object Label4: TLabel
+        object lblCliente: TLabel
           AlignWithMargins = True
           Left = 10
-          Top = 10
+          Top = 58
           Width = 1042
-          Height = 85
+          Height = 37
+          Margins.Left = 10
+          Margins.Top = 0
+          Margins.Right = 10
+          Margins.Bottom = 10
+          Align = alBottom
+          Alignment = taCenter
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -27
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          Layout = tlCenter
+          ExplicitWidth = 7
+        end
+        object lblCaixa: TLabel
+          Left = 0
+          Top = 0
+          Width = 1062
+          Height = 58
           Margins.Left = 10
           Margins.Top = 10
           Margins.Right = 10
           Margins.Bottom = 10
           Align = alClient
           Alignment = taCenter
+          AutoSize = False
           Caption = 'CAIXA ABERTO'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWhite
@@ -568,6 +725,8 @@ object frmPDV: TfrmPDV
           Font.Style = []
           ParentFont = False
           Layout = tlCenter
+          ExplicitLeft = 10
+          ExplicitTop = 10
           ExplicitWidth = 348
           ExplicitHeight = 71
         end
@@ -575,7 +734,8 @@ object frmPDV: TfrmPDV
     end
   end
   object TimerReset: TTimer
-    Interval = 100
+    Enabled = False
+    Interval = 10
     OnTimer = TimerResetTimer
     Left = 576
     Top = 432

@@ -105,6 +105,7 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_ExeOutput>C:\MiniPDV\</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -142,6 +143,7 @@
         <DCCReference Include="Controller\uVenda.pas"/>
         <DCCReference Include="Controller\uVendasItens.pas"/>
         <DCCReference Include="Controller\uProdutos.pas"/>
+        <DCCReference Include="utils\uFuncoes.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -168,7 +170,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="4">
-                <DeployFile LocalName="Win32\Debug\Project.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\MiniPDV\Project.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>Project.exe</RemoteName>
                         <Overwrite>true</Overwrite>

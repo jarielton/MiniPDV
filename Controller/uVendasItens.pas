@@ -34,7 +34,7 @@ type
     procedure SetQryPesquisa(const Value: TFDQuery);
 
     function InserirDB: Boolean;
-    function Selecionar(Id: Integer): String;
+    function Descricao(Id: Integer): String;
   public
     constructor Create(Conn: TConn);
 
@@ -54,6 +54,7 @@ type
     function Alterar: Boolean;
     function Deletar(Id: integer): Boolean;
     function GravaItens(iVenda: Integer): Boolean;
+    function Selecionar(Id: Integer): Boolean;
 
   end;
 
@@ -92,7 +93,7 @@ begin
     uDM.TBItensQTD.AsFloat := FQtd;
     uDM.TBItensVALOR_UN.AsFloat := FValorUn;
     uDM.TBItensTOTAL.AsFloat := FQtd * FValorUn;
-    uDM.TBItensPRODUTO.AsString :=  Selecionar(FidProduto);
+    uDM.TBItensPRODUTO.AsString :=  Descricao(FidProduto);
     try
       Post;
       Result := true;
@@ -148,8 +149,9 @@ begin
   with Qry do
   begin
     Close;
-    SQL.Text := ' Insert into VendasItens' + ' (Id_Venda, Id_Produto, Qtd, ValorUn, Total)' +
-      ' Values ' + ' (:idVenda, :idProduto, :Qtd, :ValorUn, :Total)';
+    SQL.Text := ' Insert into pedidos_produtos (numero_pedido, codigo_produto,' +
+    ' quantidade, valor_unitario, valor_total) Values (:idVenda, :idProduto, :Qtd,' +
+    ' :ValorUn, :Total)';
     ParamByName('idVenda').Value := FidVenda;
     ParamByName('idProduto').Value := FidProduto;
     ParamByName('Qtd').AsFloat := FQtd;
@@ -164,16 +166,51 @@ begin
   end;
 end;
 
-function TVendasItens.Selecionar(Id: Integer): String;
+function TVendasItens.Selecionar(Id: Integer): Boolean;
+begin
+  if ID = 0 then
+    DsPesquisa.DataSet := uDM.TBItens
+  else
+  begin
+    with QryPesquisa do
+    begin
+      Close;
+      SQL.Text := ' Select id, numero_pedido N_Pedido, codigo_produto '+
+      ' Cod_Produto, descricao, quantidade QTD, valor_unitario Preço, '+
+      ' valor_total Total from pedidos_produtos pp '+
+      ' INNER JOIN produtos p ON pp.codigo_produto = p.codigo';
+      if Id > 0 then
+      begin
+        SQL.add(' where numero_pedido = :Id');
+        ParamByName('Id').Value := Id;
+      end;
+
+      try
+        Open;
+        TNumericField(QryPesquisa.FieldByName('Preço')).DisplayFormat :=  '#0.00';
+        TNumericField(QryPesquisa.FieldByName('Total')).DisplayFormat :=  '#0.00';
+        if not eof then
+          Result := true
+        else
+          Result := False;
+      except
+        Result := False;
+      end;
+    end;
+    DsPesquisa.DataSet := QryPesquisa;
+  end;
+end;
+
+function TVendasItens.Descricao(Id: Integer): String;
 begin
 
   with QryPesquisa do
   begin
     Close;
-    SQL.Text := ' Select Descricao from Produto where 1=1 ';
+    SQL.Text := ' Select descricao from produtos where 1=1 ';
     if Id > 0 then
     begin
-      SQL.add(' and id = :Id');
+      SQL.add(' and codigo = :Id');
       ParamByName('Id').Value := Id;
     end;
 

@@ -27,7 +27,6 @@ type
     procedure SetQry(const Value: TFDQuery);
     procedure SetQryPesquisa(const Value: TFDQuery);
     procedure SetTotal(const Value: double);
-    function GetLastInsertRowID(Connection: TFDConnection): Int64;
   public
     constructor Create(Conn: TConn);
 
@@ -54,12 +53,12 @@ begin
   with Qry do
   begin
     Close;
-    SQL.Text := ' Update Vendas Set ' +
-      ' Total = :Total,' + ' VendaDT_EMISSAO = :Data,' + ' idCliente = :idCliente' +
-      ' Where ' + ' id = :id';
+    SQL.Text := ' Update pedidos Set ' +
+      ' valor_total = :Total, data_emissao = :Data, codigo_cliente = :idCliente' +
+      ' Where numero_pedido = :id';
     ParamByName('id').AsInteger := FId;
     ParamByName('Total').AsFloat := FTotal;
-    ParamByName('Data').AsString := FDtEmissao;
+    ParamByName('Data').AsDate := StrToDate(FDtEmissao);
     ParamByName('idCliente').AsInteger := IdCliente;
     try
       ExecSQL;
@@ -88,7 +87,7 @@ begin
   with Qry do
   begin
     Close;
-    SQL.Text := ' delete from Vendas' + ' where id = :Id';
+    SQL.Text := ' delete from pedidos where numero_pedido = :Id';
     ParamByName('Id').Value := Id;
     try
       ExecSQL;
@@ -104,14 +103,17 @@ begin
   with Qry do
   begin
     Close;
-    SQL.Text := ' Insert into Vendas' + ' (Total, Dt_Emissao, Id_Cliente)' +
-      ' Values ' + ' (:Total, :Data, :idCliente)';
+    SQL.Text := ' Insert into pedidos (valor_total, data_emissao, codigo_cliente)' +
+      ' Values (:Total, :Data, :idCliente)';
     ParamByName('Total').AsFloat := FTotal;
-    ParamByName('Data').AsString := FDtEmissao;
+    ParamByName('Data').AsString := FormatDateTime('yyyy-MM-dd', now);
     ParamByName('idCliente').AsInteger := IdCliente;
     try
       ExecSQL;
-      FId := GetLastInsertRowID(Conexao.Conn);
+      Close;
+      SQL.Text := 'SELECT LAST_INSERT_ID() as ID';
+      Open;
+      FId := FieldByName('ID').AsInteger;
       Result := true;
     except
       Result := False;
@@ -157,11 +159,6 @@ end;
 procedure TVendas.SetQryPesquisa(const Value: TFDQuery);
 begin
   FQryPesquisa := Value;
-end;
-
-function TVendas.GetLastInsertRowID(Connection: TFDConnection): Int64;
-begin
-  Result := Int64((TObject(Connection.CliObj) as TSQLiteDatabase).LastInsertRowid);
 end;
 
 end.

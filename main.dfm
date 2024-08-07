@@ -238,7 +238,7 @@ object frmMain: TfrmMain
           AlignWithMargins = True
           Left = 50
           Top = 20
-          Width = 992
+          Width = 258
           Height = 37
           Margins.Left = 50
           Margins.Top = 20
@@ -251,7 +251,6 @@ object frmMain: TfrmMain
           Font.Name = 'Segoe UI'
           Font.Style = []
           ParentFont = False
-          ExplicitWidth = 258
         end
         object edCliente: TEdit
           AlignWithMargins = True
@@ -279,11 +278,12 @@ object frmMain: TfrmMain
           Left = 50
           Top = 148
           Width = 992
-          Height = 477
+          Height = 481
           Margins.Left = 50
           Margins.Top = 20
           Margins.Right = 50
-          Align = alTop
+          Margins.Bottom = 0
+          Align = alClient
           DataSource = uDM.dsClient
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -330,6 +330,7 @@ object frmMain: TfrmMain
           Width = 992
           Height = 65
           Margins.Left = 50
+          Margins.Top = 15
           Margins.Right = 50
           Margins.Bottom = 15
           Align = alBottom
@@ -337,9 +338,9 @@ object frmMain: TfrmMain
           ParentColor = True
           TabOrder = 2
           object Panel1: TPanel
-            Left = 652
+            Left = 692
             Top = 0
-            Width = 340
+            Width = 300
             Height = 65
             Margins.Left = 5
             Margins.Top = 5
@@ -356,6 +357,7 @@ object frmMain: TfrmMain
             ParentBackground = False
             ParentFont = False
             TabOrder = 0
+            ExplicitLeft = 682
             object Label11: TLabel
               Left = 0
               Top = 0
@@ -375,9 +377,10 @@ object frmMain: TfrmMain
               Tag = 4
               Left = 0
               Top = 0
-              Width = 340
+              Width = 300
               Height = 65
               Cursor = crHandPoint
+              Align = alClient
               Alignment = taCenter
               AutoSize = False
               Caption = 'CONFIRMAR'
@@ -389,12 +392,13 @@ object frmMain: TfrmMain
               ParentFont = False
               Layout = tlCenter
               OnClick = lblConfirmarClick
+              ExplicitWidth = 340
             end
           end
           object Panel2: TPanel
             Left = 0
             Top = 0
-            Width = 340
+            Width = 300
             Height = 65
             Margins.Left = 5
             Margins.Top = 5
@@ -402,16 +406,72 @@ object frmMain: TfrmMain
             Margins.Bottom = 5
             Align = alLeft
             BevelOuter = bvNone
-            Color = clMaroon
+            Color = 9858305
             ParentBackground = False
             TabOrder = 1
+            object lblVoltar: TLabel
+              Tag = 4
+              Left = 0
+              Top = 0
+              Width = 300
+              Height = 65
+              Cursor = crHandPoint
+              Align = alClient
+              Alignment = taCenter
+              AutoSize = False
+              Caption = 'VOLTAR'
+              Color = clMaroon
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWhite
+              Font.Height = -27
+              Font.Name = 'Segoe UI'
+              Font.Style = []
+              ParentColor = False
+              ParentFont = False
+              Layout = tlCenter
+              OnClick = lblVoltarClick
+              ExplicitWidth = 340
+            end
+            object Label13: TLabel
+              Left = 0
+              Top = 0
+              Width = 100
+              Height = 65
+              Alignment = taCenter
+              AutoSize = False
+              Caption = #8617
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWhite
+              Font.Height = -53
+              Font.Name = 'Arial'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+          end
+          object Panel3: TPanel
+            AlignWithMargins = True
+            Left = 377
+            Top = 0
+            Width = 300
+            Height = 65
+            Margins.Left = 0
+            Margins.Top = 0
+            Margins.Right = 15
+            Margins.Bottom = 0
+            Align = alRight
+            BevelOuter = bvNone
+            Color = clMaroon
+            ParentBackground = False
+            TabOrder = 2
+            ExplicitLeft = 382
             object lblCancel: TLabel
               Tag = 4
               Left = 0
               Top = 0
-              Width = 340
+              Width = 300
               Height = 65
               Cursor = crHandPoint
+              Align = alClient
               Alignment = taCenter
               AutoSize = False
               Caption = 'CANCELAR'
@@ -425,8 +485,9 @@ object frmMain: TfrmMain
               ParentFont = False
               Layout = tlCenter
               OnClick = lblCancelClick
+              ExplicitWidth = 340
             end
-            object Label13: TLabel
+            object Label6: TLabel
               Left = 0
               Top = 0
               Width = 100
@@ -449,6 +510,6 @@ object frmMain: TfrmMain
   object Timer1: TTimer
     OnTimer = Timer1Timer
     Left = 112
-    Top = 592
+    Top = 536
   end
 end

@@ -3,79 +3,55 @@ unit uConn;
 interface
 
 uses
-  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
   FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.VCLUI.Wait, Data.DB,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, System.IniFiles, FireDAC.Phys.MySQL;
 
 type
   TConn = class
 
   public
     Conn: TFDConnection;
+    MySQLDriver: TFDPhysMySQLDriverLink;
     procedure DataModuleCreate(Sender: TObject);
-    procedure connAfterConnect(Sender: TObject);
-    procedure connBeforeConnect(Sender: TObject);
 
     constructor Create;
   end;
 
 implementation
 
+uses
+  System.SysUtils, Vcl.Forms;
+
 { TConn }
 
 constructor TConn.Create;
+var pathExe, pathDll: String;
+  ini: TIniFile;
 begin
+  pathExe := ExtractFileDir(Application.ExeName);
+  ini := TIniFile.Create(pathExe + '\Banco.ini');
+
+  MySQLDriver := TFDPhysMySQLDriverLink.Create(nil);
+  MySQLDriver.VendorLib := ExtractFilePath(Application.ExeName) +
+    'libmysql.dll';
+
+
   Conn := TFDConnection.Create(nil);
-  Conn.Params.Values['LockingMode'] := 'Normal';
-  Conn.Params.Values['DriverID'] := 'SQLite';
+
+  Conn.Params.Values['DriverID']  := 'MySQL';
+  Conn.Params.Values['Port']  := '3306';
+  Conn.Params.Values['Database']  := ini.ReadString('DB', 'Database', '');
+  Conn.Params.Values['User_Name'] := ini.ReadString('DB', 'User', '');
+  Conn.Params.Values['Server']    := ini.ReadString('DB', 'IP', '');
+  Conn.Params.Values['Password']  := ini.ReadString('DB', 'Pass', '');
+
+
 
   Conn.LoginPrompt := False;
-  Conn.AfterConnect := connAfterConnect;
-  Conn.BeforeConnect := connBeforeConnect;
-end;
-
-
-procedure TConn.connAfterConnect(Sender: TObject);
-begin
-  try
-    Conn.ExecSQL('CREATE TABLE IF NOT EXISTS Produto( Id INTEGER PRIMARY KEY '+
-                ' AUTOINCREMENT NOT NULL,     '+
-                ' Descricao varchar(30),       '+
-                ' Preco REAL );     ');
-    Conn.ExecSQL('CREATE TABLE IF NOT EXISTS Clientes( Id INTEGER PRIMARY KEY '+
-                ' AUTOINCREMENT NOT NULL, '+
-                ' Nome varchar(30),       '+
-                ' Cidade varchar(20),   '+
-                ' Uf varchar(2),  '+
-                ' Obs varchar(200) );     ');
-    Conn.ExecSQL('CREATE TABLE IF NOT EXISTS Vendas( Id INTEGER PRIMARY KEY '+
-                ' AUTOINCREMENT NOT NULL, '+
-                ' Id_Cliente INTEGER,       '+
-                ' Dt_Emissao NUMERIC,       '+
-                ' Total REAL );     ');
-
-    Conn.ExecSQL('CREATE TABLE IF NOT EXISTS VendasItens( Id INTEGER PRIMARY KEY '+
-                ' AUTOINCREMENT NOT NULL, '+
-                ' Id_Venda INTEGER,       '+
-                ' Id_Produto INTEGER,       '+
-                ' Qtd REAL, ValorUn REAL, Total REAL );     ');
-  except on e:exception do
-    raise Exception.Create('Erro de conexao com o banco de dados: ' + e.Message);
-  end;
-end;
-
-procedure TConn.connBeforeConnect(Sender: TObject);
-begin
-    conn.DriverName := 'SQLite';
-
-    {$IFDEF MSWINDOWS}
-    conn.Params.Values['Database'] := System.SysUtils.GetCurrentDir + '\DB\banco.db';
-    {$ELSE}
-    conn.Params.Values['Database'] := TPath.Combine(TPath.GetDocumentsPath, 'banco.db');
-    {$ENDIF}
 end;
 
 procedure TConn.DataModuleCreate(Sender: TObject);

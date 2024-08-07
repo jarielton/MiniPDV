@@ -49,25 +49,6 @@ implementation
 
 { TProdutos }
 
-function TProdutos.Alterar: Boolean;
-begin
-  with Qry do
-  begin
-    Close;
-    SQL.Text := ' Update Produto Set ' +
-      ' Preco = :Preco,' + ' Descricao = :Descricao' +
-      ' Where ' + ' id = :id';
-    ParamByName('Preco').AsFloat := FPreco;
-    ParamByName('Descricao').AsString := FDescricao;
-    try
-      ExecSQL;
-      Result := true;
-    except
-      Result := False;
-    end;
-  end;
-end;
-
 constructor TProdutos.Create(Conn: TConn);
 begin
   Conexao := Conn;
@@ -86,7 +67,7 @@ begin
   with Qry do
   begin
     Close;
-    SQL.Text := ' delete from Produto' + ' where id = :Id';
+    SQL.Text := ' delete from produtos where codigo = :Id';
     ParamByName('Id').Value := Id;
     try
       ExecSQL;
@@ -102,10 +83,29 @@ begin
   with Qry do
   begin
     Close;
-    SQL.Text := ' Insert into Produto' + ' ( Descricao, Preco)' +
-      ' Values ' + ' (:Descricao, :Preco)';
+    SQL.Text := ' Insert into produtos ( descricao, preco_venda)' +
+      ' Values (:Descricao, :Preco)';
     ParamByName('Descricao').Value := FDescricao;
     ParamByName('Preco').AsFloat := FPreco;
+    try
+      ExecSQL;
+      Result := true;
+    except
+      Result := False;
+    end;
+  end;
+end;
+
+function TProdutos.Alterar: Boolean;
+begin
+  with Qry do
+  begin
+    Close;
+    SQL.Text := ' Update produtos Set ' +
+      ' preco_venda = :Preco,' + ' descricao = :Descricao' +
+      ' Where ' + ' codigo = :id';
+    ParamByName('Preco').AsFloat := FPreco;
+    ParamByName('Descricao').AsString := FDescricao;
     try
       ExecSQL;
       Result := true;
@@ -120,17 +120,21 @@ begin
   with QryPesquisa do
   begin
     Close;
-    SQL.Text := ' Select * from Produto where 1=1 ';
+    SQL.Text := ' Select * from produtos where 1=1 ';
     if Id > 0 then
     begin
-      SQL.add(' and id = :Id');
+      SQL.add(' and codigo = :Id');
       ParamByName('Id').Value := Id;
     end;
 
     try
       Open;
+      TNumericField(QryPesquisa.FieldByName('preco_venda')).DisplayFormat :=  '#0.00';
       if not eof then
-        Result := true
+        begin
+          FId := id;
+          Result := true
+        end
       else
         Result := False;
     except

@@ -31,24 +31,29 @@ type
     GridClientes: TDBGrid;
     Panel1: TPanel;
     Panel2: TPanel;
-    lblCancel: TLabel;
+    lblVoltar: TLabel;
     Label13: TLabel;
     pnlBtns: TPanel;
     Label11: TLabel;
     pnlCenter: TPanel;
     lblConfirmar: TLabel;
     Timer1: TTimer;
+    Panel3: TPanel;
+    lblCancel: TLabel;
+    Label6: TLabel;
     procedure edClienteChange(Sender: TObject);
     procedure edClienteKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure lblConfirmarClick(Sender: TObject);
-    procedure lblCancelClick(Sender: TObject);
+    procedure lblVoltarClick(Sender: TObject);
     procedure lblNovoClick(Sender: TObject);
     procedure lblSairClick(Sender: TObject);
     procedure FormShortCut(var Msg: TWMKey; var Handled: Boolean);
     procedure Timer1Timer(Sender: TObject);
+    procedure lblCancelClick(Sender: TObject);
   private
+    procedure ChamaPDV(idCliente: Integer);
           { Private declarations }
   public
           { Public declarations }
@@ -102,29 +107,36 @@ begin
   pnlCenter.Top := (Screen.Height div 2) - (pnlCenter.Height div 2) - 100;
 end;
 
-procedure TfrmMain.lblCancelClick(Sender: TObject);
+procedure TfrmMain.lblVoltarClick(Sender: TObject);
 begin
   cPanel.ActiveCard := cStart;
   uDM.TBClient.Filtered := False;
 end;
 
+procedure TfrmMain.lblCancelClick(Sender: TObject);
+begin
+  ChamaPDV(0);
+end;
+
 procedure TfrmMain.lblConfirmarClick(Sender: TObject);
+begin
+  ChamaPDV(uDM.TBClientID.AsInteger);
+end;
+
+procedure TfrmMain.ChamaPDV(idCliente: Integer);
 var
   frmPDV: TfrmPDV;
 begin
-  if uDM.TBClientID.AsInteger > 0 then
-  begin
-    frmPDV := TfrmPDV.Create(nil);
-    try
+  frmPDV := TfrmPDV.Create(nil);
+  try
+    uDM.TBClient.Filtered := False;
+    frmPDV.idClient := idCliente;
+    frmPDV.ShowModal;
+  finally
+    if not frmPDV.SelecionarCliente then
       cPanel.ActiveCard := cStart;
-      uDM.TBClient.Filtered := False;
-      frmPDV.idClient := uDM.TBClientID.AsInteger;
-      frmPDV.ShowModal;
-    finally
-      frmPDV.Free;
-    end;
+    frmPDV.Free;
   end;
-
 end;
 
 procedure TfrmMain.lblNovoClick(Sender: TObject);

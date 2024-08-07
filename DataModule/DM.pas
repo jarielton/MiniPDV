@@ -6,7 +6,9 @@ uses
   System.SysUtils, System.Classes, Data.DB, Datasnap.DBClient,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Stan.StorageBin, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Stan.StorageBin, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Phys.MySQLDef, FireDAC.Phys.MySQL;
 
 type
   TuDM = class(TDataModule)
@@ -36,6 +38,8 @@ type
     TBClientCIDADE: TStringField;
     TBClientUF: TStringField;
     TBProduct: TFDMemTable;
+    FDConnection1: TFDConnection;
+    FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink;
     procedure TBItensCalcFields(DataSet: TDataSet);
   private
     { Private declarations }

@@ -442,4 +442,15 @@ object uDM: TuDM
       Size = 2
     end
   end
+  object FDConnection1: TFDConnection
+    Params.Strings = (
+      'DriverID=MySQL')
+    Left = 304
+    Top = 224
+  end
+  object FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink
+    VendorLib = 'C:\MiniPDV\libmysql.dll'
+    Left = 424
+    Top = 232
+  end
 end

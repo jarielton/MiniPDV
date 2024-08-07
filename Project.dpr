@@ -8,7 +8,8 @@ uses
   DM in 'DataModule\DM.pas' {uDM: TDataModule},
   uVenda in 'Controller\uVenda.pas',
   uVendasItens in 'Controller\uVendasItens.pas',
-  uProdutos in 'Controller\uProdutos.pas';
+  uProdutos in 'Controller\uProdutos.pas',
+  uFuncoes in 'utils\uFuncoes.pas';
 
 {$R *.res}
 

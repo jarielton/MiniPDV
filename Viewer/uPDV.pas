@@ -4,9 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics, uConn, Vcl.DBGrids, Vcl.WinXPanels,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Mask,
-  Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Grids, uVenda, uVendasItens, uProdutos;
+  System.Classes, Vcl.Graphics, uConn, Vcl.DBGrids, Vcl.WinXPanels, System.IniFiles,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Mask, uFuncoes,
+  Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Grids, uVenda, uVendasItens, uProdutos,
+  Vcl.Buttons;
 
 type
   TfrmPDV = class(TForm)
@@ -15,7 +16,7 @@ type
     CardPanel1: TCardPanel;
     Card1: TCard;
     pnlTopo: TPanel;
-    Label4: TLabel;
+    lblCaixa: TLabel;
     pnlEdits: TPanel;
     pnl4vTotal: TPanel;
     pnl3Preco: TPanel;
@@ -41,6 +42,15 @@ type
     edVL_UN: TEdit;
     edSUB_TOTAL: TEdit;
     TimerReset: TTimer;
+    pnlAcao: TPanel;
+    SpeedButton1: TSpeedButton;
+    Panel2: TPanel;
+    lblPedido: TLabel;
+    Label9: TLabel;
+    Panel3: TPanel;
+    lblDelete: TLabel;
+    Label11: TLabel;
+    lblCliente: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure edIDChange(Sender: TObject);
     procedure edIDKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -60,6 +70,9 @@ type
     procedure dbGridProdutosKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure dbGridProdutosCellClick(Column: TColumn);
+    procedure lblPedidoClick(Sender: TObject);
+    procedure lblDeleteClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     TotalVenda: double;
     procedure ProdutoSelecionando;
@@ -68,17 +81,21 @@ type
     procedure CalcTotal;
     procedure ResetaCampos;
     function ShowProduto: Boolean;
+    procedure FinalizarVenda;
+    procedure AddCliente;
+    procedure ShowCliente;
     { Private declarations }
   public
     { Public declarations }
     idClient: Integer;
+    SelecionarCliente: Boolean;
   end;
 
 var
   frmPDV: TfrmPDV;
   Conn: TConn;
   Venda: TVendas;
-  VendaItens: TVendasItens;
+  Pedidos: TVendasItens;
   Produtos: TProdutos;
 
 implementation
@@ -94,7 +111,8 @@ begin
   iD := StrToIntDef(edID.Text, 0);
   Produtos.Selecionar(iD);
   SetDS(Produtos.DsPesquisa);
-  ProdutoSelecionando;
+  if Produtos.DsPesquisa.DataSet.RecordCount > 0 then
+    ProdutoSelecionando;
 end;
 
 procedure TfrmPDV.edIDClick(Sender: TObject);
@@ -108,7 +126,7 @@ begin
   if ShowProduto then
   begin
     edQTD.Text := '1';
-    edVL_UN.Text := FormatFloat('R$ #,0.00', Produtos.DsPesquisa.DataSet.fieldbyname('Preco').AsFloat);
+    edVL_UN.Text := FormatFloat('R$ #,0.00', Produtos.DsPesquisa.DataSet.fieldbyname('preco_venda').AsFloat);
     edSUB_TOTAL.Text := edVL_UN.Text;
   end;
 end;
@@ -116,7 +134,7 @@ end;
 procedure TfrmPDV.edIDExit(Sender: TObject);
 begin
   if ShowProduto then
-    edID.Text := Produtos.DsPesquisa.DataSet.fieldbyname('Id').AsString;
+    edID.Text := Produtos.DsPesquisa.DataSet.fieldbyname('codigo').AsString;
 end;
 
 procedure TfrmPDV.edIDKeyDown(Sender: TObject; var Key: Word;
@@ -175,9 +193,11 @@ end;
 procedure TfrmPDV.FormCreate(Sender: TObject);
 begin
   try
-    Conn := TConn.Create;
-    Produtos := TProdutos.Create(Conn);
-    VendaItens := TVendasItens.Create(Conn);
+    Conn        := TConn.Create;
+    Venda       := TVendas.Create(Conn);
+    Produtos    := TProdutos.Create(Conn);
+    Pedidos     := TVendasItens.Create(Conn);
+    Pedidos     := TVendasItens.Create(Conn);
   except
    on E: Exception do
     ShowMessage('Erro: ' + E.Message );
@@ -197,36 +217,62 @@ begin
         dbGridProdutos.DataSource.DataSet.Delete;
       end;
   end;
+  if Msg.CharCode = 112 then
+    AddCliente;
+end;
+
+procedure TfrmPDV.FormShow(Sender: TObject);
+begin
+  ResetaCampos;
+  ShowCliente;
+end;
+
+procedure TfrmPDV.ShowCliente;
+begin
+  pnlAcao.Visible := false;
+  lblCliente.Caption := 'Cliente cod:' +idClient.ToString;
+  if idClient = 0 then
+  begin
+    pnlAcao.Visible := true;
+    lblCliente.Caption := 'F1 - Cliente';
+  end;
+end;
+
+procedure TfrmPDV.AddCliente;
+begin
+  SelecionarCliente := true;
+  Close;
+  exit;
 end;
 
 procedure TfrmPDV.Adicionar(AddItem: Boolean = false);
 begin
   if AddItem and ShowProduto then
   begin
-    VendaItens.idProduto := Produtos.DsPesquisa.DataSet.fieldbyname('id').AsInteger;
-    VendaItens.ValorUn := Produtos.DsPesquisa.DataSet.fieldbyname('Preco').AsFloat;
-    VendaItens.Qtd := StrToFloat(edQTD.Text);
-    VendaItens.Inserir;
+    Pedidos.idProduto := Produtos.DsPesquisa.DataSet.fieldbyname('codigo').AsInteger;
+    Pedidos.ValorUn   := StrToFloat(TFuncoes.SoNumero(edVL_UN.Text));
+    Pedidos.Qtd       := StrToFloat(edQTD.Text);
+    Pedidos.Inserir;
   end;
   ResetaCampos;
 end;
 
 procedure TfrmPDV.ResetaCampos;
 begin
-  TimerReset.Enabled := true;
-end;
-
-procedure TfrmPDV.TimerResetTimer(Sender: TObject);
-begin
-  TimerReset.Enabled := false;
   Perform(CM_DialogKey, VK_TAB, 0);
   edID.Text        := '0';
   edQTD.Text       := '0';
   edVL_UN.Text     := FormatFloat('R$ #,0.00', 0);
   edSUB_TOTAL.Text := FormatFloat('R$ #,0.00', 0);
-  SetDS(VendaItens.DsPesquisa);
-  CalcTotal;
   edID.SetFocus;
+  SetDS(Pedidos.DsPesquisa);
+  CalcTotal;
+end;
+
+procedure TfrmPDV.TimerResetTimer(Sender: TObject);
+begin
+  TimerReset.Enabled := false;
+  ResetaCampos;
 end;
 
 procedure TfrmPDV.lblAddClick(Sender: TObject);
@@ -241,19 +287,65 @@ end;
 
 procedure TfrmPDV.lblGravarPedidoClick(Sender: TObject);
 begin
+  if idClient > 0 then
+    begin
+      FinalizarVenda;
+      ResetaCampos;
+      idClient := 0;
+      ShowCliente
+    end
+  else
+    if application.MessageBox('Pedido sem cliente '+#13+
+    'Deseja informar cliente agora?','ATENÇÃO',MB_YESNO + MB_ICONWARNING)=MRYES then
+    begin
+      AddCliente;
+    end;
+end;
+
+procedure TfrmPDV.FinalizarVenda;
+begin
   if TotalVenda > 0 then
   begin
     try
-      Venda := TVendas.Create(Conn);
       Venda.IdCliente := idClient;
-      Venda.Data := FormatDateTime('DD/MM/YYYY', now);
-      Venda.Total := TotalVenda;
+      Venda.Total     := TotalVenda;
       Venda.Inserir;
       if Venda.Id > 0 then
-        VendaItens.GravaItens(Venda.Id);
-    finally
-      ResetaCampos;
+        Pedidos.GravaItens(Venda.Id);
+    except on e:exception do
+      raise Exception.Create('Erro ao finalizar venda: ' + e.Message);
     end;
+  end;
+end;
+
+procedure TfrmPDV.lblDeleteClick(Sender: TObject);
+var
+  sCodigo: String;
+  iCodigo: Integer;
+  msg: Char;
+begin
+  if InputQuery('Deletar Pedido', 'Informe o codigo:', sCodigo) then
+  begin
+    iCodigo := StrToIntDef(sCodigo, 0);
+    if iCodigo > 0 then
+      if application.MessageBox('Deseja essa venda ?','ATENÇÃO',MB_YESNO + MB_ICONWARNING)=MRYES then
+        Venda.Deletar(iCodigo);
+  end;
+end;
+
+procedure TfrmPDV.lblPedidoClick(Sender: TObject);
+var
+  sCodigo: String;
+  iCodigo: Integer;
+begin
+  if InputQuery('Localizar Pedido', 'Informe o codigo:', sCodigo) then
+  begin
+    iCodigo := StrToIntDef(sCodigo, 0);
+    if iCodigo > 0 then
+      begin
+        Pedidos.Selecionar(iCodigo);
+        SetDS(Pedidos.DsPesquisa);
+      end;
   end;
 end;
 
@@ -262,14 +354,14 @@ var SubTotal: double;
 begin
   if Produtos.Id > 0 then
   begin
-    SubTotal := StrToFloat(edQTD.Text) * Produtos.DsPesquisa.DataSet.fieldbyname('Preco').AsFloat;
+    SubTotal := StrToFloat(edQTD.Text) * StrToFloat(TFuncoes.SoNumero(edVL_UN.Text));
     edSUB_TOTAL.Text := FormatFloat('R$ #,0.00', SubTotal);
   end;
 end;
 
 procedure TfrmPDV.CalcTotal;
 begin
-  with VendaItens.DsPesquisa.DataSet do
+  with Pedidos.DsPesquisa.DataSet do
   begin
     TotalVenda := 0;
     DisableControls;
